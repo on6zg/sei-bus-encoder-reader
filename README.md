@@ -75,6 +75,24 @@ pulses=14393  heading= 115.27 deg
 
 On Windows, replace `/dev/ttyUSB0` with the appropriate `COMn` port.
 
+## Setting a true-north (or other absolute) reference
+
+The encoder's own raw zero point is wherever it happened to be when it
+was mounted — it has no idea where true north is. `--offset` is also how
+you correct for this: once you know how far off the readout is from the
+real-world reference, add (or subtract) that amount.
+
+Example: the mount's mechanical zero points 15 degrees east of true
+north, so without correction the tool reads `15.0` while the antenna is
+actually pointing at `0.0` (north). Fix it with:
+
+```bash
+python3 sei_encoder_heading.py --port /dev/ttyUSB0 --addr 0 --ppr 44952 --offset -15
+```
+
+Negative offsets wrap correctly (e.g. a raw `5.0` with `--offset -15`
+reads as `350.0`, not `-10.0`).
+
 ## Calibration — don't trust a nameplate/config PPR blindly
 
 The bus gives you a raw pulse count with no resolution information
